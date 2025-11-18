@@ -19,27 +19,67 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func main() {
-	err := godotenv.Load(".env")
-	networkPublicKey := provider.NetworkPublicKeyHexed(os.Getenv("NETWORK_PUBLIC_KEY"))
-	providerPrivateKey := network.PrivateKeyHexed(os.Getenv("PROVIDER_PRIVATE_KEY"))
-	baseUrl := os.Getenv("TZERO_ENDPOINT")
+type Config struct {
+	NetworkPublicKey   provider.NetworkPublicKeyHexed
+	ProviderPrivateKey network.PrivateKeyHexed
+	TZeroEndpoint      string
+	ServerAddr         string
+}
 
+func main() {
+	config := loadConfig()
+
+	networkClient := initNetworkClient(config)
+
+	shutdownFunc := startProviderServer(config, networkClient)
+	defer shutdownFunc()
+
+	// ✅ Step 1.1 is done. You successfully initialised starter template
+
+	// TODO: Step 1.2 Share the generated public key from .env with t-0 team
+
+	// TODO: Step 1.3 Replace publishQuotes with your own quote publishing logic
+
+	go publishQuotes(context.Background(), networkClient)
+
+	// TODO: Step 1.4 Verify that quotes for target currency are successfully received
+	go getQuote(context.Background(), networkClient)
+
+	waitForShutdownSignal(shutdownFunc)
+
+	// TODO: Step 2.2 Deploy your integration and provide t-0 team with the base URL
+	// TODO: Step 2.3 Test payment submission (see submit_payment.ts)
+	// TODO: Step 2.5 Ask t-0 team to submit a payment to test your payOut endpoint
+}
+
+func loadConfig() Config {
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatalf("Failed to load .env file: %v", err)
+	}
+
+	return Config{
+		NetworkPublicKey:   provider.NetworkPublicKeyHexed(os.Getenv("NETWORK_PUBLIC_KEY")),
+		ProviderPrivateKey: network.PrivateKeyHexed(os.Getenv("PROVIDER_PRIVATE_KEY")),
+		TZeroEndpoint:      os.Getenv("TZERO_ENDPOINT"),
+		ServerAddr:         ":8080",
+	}
+}
+
+func initNetworkClient(config Config) paymentconnect.NetworkServiceClient {
 	networkClient, err := network.NewServiceClient(
-		providerPrivateKey,
+		config.ProviderPrivateKey,
 		paymentconnect.NewNetworkServiceClient,
-		// Optional configuration for the network service client.
-		network.WithBaseURL(baseUrl),
+		network.WithBaseURL(config.TZeroEndpoint),
 	)
 	if err != nil {
 		log.Fatalf("Failed to create network service client: %v", err)
 	}
+	return networkClient
+}
 
-	// Initialize a provider service handler using your implementation of the
-	// networkconnect.ProviderServiceHandler interface.
+func startProviderServer(config Config, networkClient paymentconnect.NetworkServiceClient) func() {
 	providerServiceHandler, err := provider.NewHttpHandler(
-		networkPublicKey,
-		// Your provider service implementation
+		config.NetworkPublicKey,
 		provider.Handler(paymentconnect.NewProviderServiceHandler,
 			paymentconnect.ProviderServiceHandler(handler.NewProviderServiceImplementation(networkClient))),
 	)
@@ -47,49 +87,31 @@ func main() {
 		log.Fatalf("Failed to create provider service handler: %v", err)
 	}
 
-	// Start an HTTP server with the provider service handler,
 	shutdownFunc, err := provider.StartServer(
 		providerServiceHandler,
-		provider.WithAddr(":8080"),
+		provider.WithAddr(config.ServerAddr),
 	)
 	if err != nil {
 		log.Fatalf("Failed to start provider server: %v", err)
 	}
 
-	// ✅ Step 1.1 is done. You successfully initialised starter template
+	log.Printf("✅ Step 1.1: Provider server initialized on %s\n", config.ServerAddr)
 
-	// TODO: Step 1.2 take you generated public key from .env and share it with t-0 team
+	return func() {
+		if err := shutdownFunc(context.Background()); err != nil {
+			log.Fatalf("Failed to shutdown provider service: %v", err)
+		}
+	}
+}
 
-	// TODO: Step 1.3 implement publishing of quotes
-	go func() {
-		ctx := context.Background()
-		publishQuotes(ctx, networkClient)
-	}()
-
-	// TODO: Step 1.4 check that quote for target currency is successfully received
-	go func() {
-		ctx := context.Background()
-		getQuote(ctx, networkClient)
-	}()
-
-	ctx, stop := signal.NotifyContext(context.Background(),
-		os.Interrupt,
-		syscall.SIGTERM)
+func waitForShutdownSignal(shutdownFunc func()) {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	<-ctx.Done() // blocks until signal received
+	<-ctx.Done()
 
-	err = shutdownFunc(context.Background())
-	if err != nil {
-		log.Fatalf("Failed to shutdown provider service: %v", err)
-	}
-
-	// TODO: Step 2.2 deploy your integration and provide t-0 team base URL of your deployment
-
-	// TODO: Step 2.3 check that you can submit payment by revisiting ./submit_payment.ts uncommenting following line
-	// await submitPayment(networkClient)
-
-	// TODO: Step 2.5 ask t-0 team to submit a payment which would trigger your payOut endpoin
+	log.Println("Shutting down...")
+	shutdownFunc()
 }
 
 func publishQuotes(ctx context.Context, networkClient paymentconnect.NetworkServiceClient) {
