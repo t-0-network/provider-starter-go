@@ -1,0 +1,20 @@
+module github.com/t-0-network/provider-starter-go/template
+
+go 1.25
+
+require (
+	connectrpc.com/connect v1.19.1
+	github.com/joho/godotenv v1.5.1
+	github.com/t-0-network/provider-sdk-go v0.7.0
+)
+
+require (
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.10-20250912141014-52f32327d4b0.1 // indirect
+	github.com/btcsuite/btcd/btcec/v2 v2.3.6 // indirect
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
+	golang.org/x/crypto v0.44.0 // indirect
+	golang.org/x/net v0.47.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/text v0.31.0 // indirect
+	google.golang.org/protobuf v1.36.10 // indirect
+)
