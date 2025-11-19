@@ -35,7 +35,7 @@ import (
 )
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage: go run github.com/t-0-network/provider-starter-go/new/internal/edit dstmod\n")
+	fmt.Fprintf(os.Stderr, "usage: go run github.com/t-0-network/provider-starter-go@latest dstmod\n")
 	os.Exit(2)
 }
 
@@ -61,7 +61,8 @@ func main() {
 	needMkdir := err != nil
 
 	srcMod, _ := strings.CutSuffix(reflect.TypeOf(internal.Dummy{}).PkgPath(), "/internal")
-	srcModVers := srcMod + "/template@latest"
+	srcMod += "/template"
+	srcModVers := srcMod + "@latest"
 	var stdout, stderr bytes.Buffer
 	cmd := exec.Command("go", "mod", "download", "-json", srcModVers)
 	cmd.Stdout = &stdout
