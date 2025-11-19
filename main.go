@@ -131,7 +131,7 @@ func main() {
 
 	values["PROVIDER_PRIVATE_KEY"] = fmt.Sprintf("0x%s", hex.EncodeToString(crypto.FromECDSA(key)))
 	values["PROVIDER_PUBLIC_KEY"] = fmt.Sprintf("0x%s", hex.EncodeToString(crypto.FromECDSAPub(&key.PublicKey)))
-	err = godotenv.Write(values, ".env")
+	err = godotenv.Write(values, path.Join(dir, ".env"))
 	if err != nil {
 		log.Fatal(err)
 	}
