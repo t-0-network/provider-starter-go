@@ -61,7 +61,7 @@ func main() {
 	needMkdir := err != nil
 
 	srcMod, _ := strings.CutSuffix(reflect.TypeOf(internal.Dummy{}).PkgPath(), "/internal")
-	srcModVers := srcMod + "@latest"
+	srcModVers := srcMod + "/template@latest"
 	var stdout, stderr bytes.Buffer
 	cmd := exec.Command("go", "mod", "download", "-json", srcModVers)
 	cmd.Stdout = &stdout
@@ -124,7 +124,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	values, err := godotenv.Unmarshal(path.Join(dir, ".env.example"))
+	values, err := godotenv.Read(path.Join(dir, ".env.example"))
 	if err != nil {
 		log.Fatal(err)
 	}
