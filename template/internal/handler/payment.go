@@ -18,27 +18,37 @@ func NewProviderServiceImplementation(networkClient paymentconnect.NetworkServic
 	}
 }
 
+/*
+  Please refer to docs, proto definition comments or source code comments to understand purpose of functions
+*/
+
 var _ paymentconnect.ProviderServiceHandler = (*ProviderServiceImplementation)(nil)
 
+// TODO: Step 2.1 implement how you handle updates of payment initiated by you
 func (s *ProviderServiceImplementation) UpdatePayment(
 	ctx context.Context, req *connect.Request[payment.UpdatePaymentRequest],
 ) (*connect.Response[payment.UpdatePaymentResponse], error) {
 	return connect.NewResponse(&payment.UpdatePaymentResponse{}), nil
 }
 
+// TODO: Step 2.4 implement how you do payouts (payments initiated by your counterparts)
 func (s *ProviderServiceImplementation) PayOut(ctx context.Context, req *connect.Request[payment.PayoutRequest],
 ) (*connect.Response[payment.PayoutResponse], error) {
 	return connect.NewResponse(&payment.PayoutResponse{}), nil
 }
 
+//TODO: confirmPayout should be called when you system notifies that payout has been made successfully
+
 func (s *ProviderServiceImplementation) UpdateLimit(
 	ctx context.Context, req *connect.Request[payment.UpdateLimitRequest],
 ) (*connect.Response[payment.UpdateLimitResponse], error) {
+	// TODO: optionally implement handling of the notifications about updates on your limits and limits usage
 	return connect.NewResponse(&payment.UpdateLimitResponse{}), nil
 }
 
 func (s *ProviderServiceImplementation) AppendLedgerEntries(
 	ctx context.Context, req *connect.Request[payment.AppendLedgerEntriesRequest],
 ) (*connect.Response[payment.AppendLedgerEntriesResponse], error) {
+	// TODO: optionally implement handling of the notifications about new ledger transactions and new ledger entries
 	return connect.NewResponse(&payment.AppendLedgerEntriesResponse{}), nil
 }

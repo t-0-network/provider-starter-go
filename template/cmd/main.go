@@ -36,12 +36,15 @@ func main() {
 
 	// TODO: Step 1.3 Replace publishQuotes with your own quote publishing logic
 
-	go internal.PublishQuotes(context.Background(), networkClient)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go internal.PublishQuotes(ctx, networkClient)
 
 	// TODO: Step 1.4 Verify that quotes for target currency are successfully received
-	go internal.GetQuote(context.Background(), networkClient)
+	go internal.GetQuote(ctx, networkClient)
 
-	waitForShutdownSignal(shutdownFunc)
+	waitForShutdownSignal(cancel, shutdownFunc)
 
 	// TODO: Step 2.2 Deploy your integration and provide t-0 team with the base URL
 	// TODO: Step 2.3 Test payment submission (see submit_payment.ts)
@@ -100,12 +103,13 @@ func startProviderServer(config Config, networkClient paymentconnect.NetworkServ
 	}
 }
 
-func waitForShutdownSignal(shutdownFunc func()) {
+func waitForShutdownSignal(cancel context.CancelFunc, shutdownFunc func()) {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	<-ctx.Done()
 
 	log.Println("Shutting down...")
+	cancel()
 	shutdownFunc()
 }
