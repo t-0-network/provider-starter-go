@@ -21,6 +21,4 @@ COPY --from=builder /service /service
 
 WORKDIR /app
 
-COPY --from=builder /app/.env.runtime .env
-
 ENTRYPOINT ["/service"]
