@@ -11,6 +11,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -27,13 +28,14 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/joho/godotenv"
 	"github.com/t-0-network/provider-starter-go/internal"
 	"github.com/t-0-network/provider-starter-go/internal/edit"
 	"golang.org/x/mod/modfile"
 )
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage: go run github.com/t-0-network/provider-starter-go/new/internal/edit dstmod\n")
+	fmt.Fprintf(os.Stderr, "usage: go run github.com/t-0-network/provider-starter-go@latest dstmod\n")
 	os.Exit(2)
 }
 
@@ -59,6 +61,7 @@ func main() {
 	needMkdir := err != nil
 
 	srcMod, _ := strings.CutSuffix(reflect.TypeOf(internal.Dummy{}).PkgPath(), "/internal")
+	srcMod += "/template"
 	srcModVers := srcMod + "@latest"
 	var stdout, stderr bytes.Buffer
 	cmd := exec.Command("go", "mod", "download", "-json", srcModVers)
@@ -117,11 +120,22 @@ func main() {
 		return nil
 	})
 
+	// TODO: extract into function
 	key, err := crypto.GenerateKey()
 	if err != nil {
 		log.Fatal(err)
 	}
-	key.PublicKey.Bytes()
+	values, err := godotenv.Read(path.Join(dir, ".env.example"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	values["PROVIDER_PRIVATE_KEY"] = fmt.Sprintf("0x%s", hex.EncodeToString(crypto.FromECDSA(key)))
+	values["PROVIDER_PUBLIC_KEY"] = fmt.Sprintf("0x%s", hex.EncodeToString(crypto.FromECDSAPub(&key.PublicKey)))
+	err = godotenv.Write(values, path.Join(dir, ".env"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.Printf("initialized %s in %s", dstMod, dir)
 }
 
