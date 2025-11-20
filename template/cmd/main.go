@@ -55,7 +55,7 @@ func loadConfig() Config {
 
 	return Config{
 		NetworkPublicKey:   provider.NetworkPublicKeyHexed(os.Getenv("NETWORK_PUBLIC_KEY")),
-		ProviderPrivateKey: network.PrivateKeyHexed(os.Getenv("PRIVATE_KEY")),
+		ProviderPrivateKey: network.PrivateKeyHexed(os.Getenv("PROVIDER_PRIVATE_KEY")),
 		TZeroEndpoint:      os.Getenv("TZERO_ENDPOINT"),
 		ServerAddr:         ":" + os.Getenv("PORT"),
 	}
