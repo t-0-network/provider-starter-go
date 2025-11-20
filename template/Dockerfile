@@ -14,8 +14,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
     -o /service \
     ./cmd/main.go
 
-RUN if [ -f .env ]; then cp .env /app/.env.runtime; else touch /app/.env.runtime; fi
-
 # Runtime stage
 FROM gcr.io/distroless/base:latest-amd64
 
