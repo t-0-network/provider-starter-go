@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
+	"github.com/google/uuid"
 	"github.com/t-0-network/provider-sdk-go/api/tzero/v1/common"
 	"github.com/t-0-network/provider-sdk-go/api/tzero/v1/payment"
 	"github.com/t-0-network/provider-sdk-go/api/tzero/v1/payment/paymentconnect"
@@ -34,7 +35,7 @@ func PublishQuotes(ctx context.Context, networkClient paymentconnect.NetworkServ
 						Timestamp:     timestamppb.New(time.Now()),                       // current timestamp
 						Bands: []*payment.UpdateQuoteRequest_Quote_Band{ // one or more bands are allowed
 							{
-								ClientQuoteId: "eur-card-1000-band-1",
+								ClientQuoteId: uuid.NewString(),
 								MaxAmount: &common.Decimal{
 									Unscaled: 1000, // maximum amount in USD, could be 1000, 5000, 10000 or 25000
 									Exponent: 0,
