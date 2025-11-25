@@ -14,7 +14,7 @@ func GetQuote(ctx context.Context, networkClient paymentconnect.NetworkServiceCl
 	quote, err := networkClient.GetQuote(ctx, connect.NewRequest(&payment.GetQuoteRequest{
 		PayInCurrency: "EUR",
 		Amount: &payment.PaymentAmount{Amount: &payment.PaymentAmount_PayInAmount{
-			PayInAmount: &common.Decimal{Unscaled: 500, Exponent: 0}, // amount in BRL
+			PayInAmount: &common.Decimal{Unscaled: 500, Exponent: 0}, // amount in EUR
 		}},
 		PayInMethod:    common.PaymentMethodType_PAYMENT_METHOD_TYPE_SEPA,
 		PayOutCurrency: "GBP",
