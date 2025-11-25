@@ -25,14 +25,19 @@ func PublishQuotes(ctx context.Context, networkClient paymentconnect.NetworkServ
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
+			currency := "EUR"
+			paymentMethod := common.PaymentMethodType_PAYMENT_METHOD_TYPE_SEPA
+			expiration := timestamppb.New(time.Now().Add(30 * time.Second)) // expiration time - 30 seconds from now
+			timestamp := timestamppb.New(time.Now())                        // current timestamp
+
 			_, err := networkClient.UpdateQuote(ctx, connect.NewRequest(&payment.UpdateQuoteRequest{
 				PayOut: []*payment.UpdateQuoteRequest_Quote{
 					{
-						Currency:      "EUR",
+						Currency:      currency,
 						QuoteType:     payment.QuoteType_QUOTE_TYPE_REALTIME, // REALTIME is only one supported right now
-						PaymentMethod: common.PaymentMethodType_PAYMENT_METHOD_TYPE_CARD,
-						Expiration:    timestamppb.New(time.Now().Add(30 * time.Second)), // expiration time - 30 seconds from now
-						Timestamp:     timestamppb.New(time.Now()),                       // current timestamp
+						PaymentMethod: paymentMethod,
+						Expiration:    expiration,
+						Timestamp:     timestamp,
 						Bands: []*payment.UpdateQuoteRequest_Quote_Band{ // one or more bands are allowed
 							{
 								ClientQuoteId: uuid.NewString(),
@@ -43,6 +48,29 @@ func PublishQuotes(ctx context.Context, networkClient paymentconnect.NetworkServ
 								// note that rate is always USD/XXX, so that for BRL quote should be USD/BRL
 								Rate: &common.Decimal{ //rate 0.86
 									Unscaled: 86,
+									Exponent: -2,
+								},
+							},
+						},
+					},
+				},
+				PayIn: []*payment.UpdateQuoteRequest_Quote{
+					{
+						Currency:      currency,
+						QuoteType:     payment.QuoteType_QUOTE_TYPE_REALTIME, // REALTIME is only one supported right now
+						PaymentMethod: paymentMethod,
+						Expiration:    expiration,
+						Timestamp:     timestamp,
+						Bands: []*payment.UpdateQuoteRequest_Quote_Band{ // one or more bands are allowed
+							{
+								ClientQuoteId: uuid.NewString(),
+								MaxAmount: &common.Decimal{
+									Unscaled: 1000, // maximum amount in USD, could be 1000, 5000, 10000 or 25000
+									Exponent: 0,
+								},
+								// note that rate is always USD/XXX, so that for BRL quote should be USD/BRL
+								Rate: &common.Decimal{ //rate 0.88
+									Unscaled: 88,
 									Exponent: -2,
 								},
 							},

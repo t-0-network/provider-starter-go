@@ -16,7 +16,7 @@ func GetQuote(ctx context.Context, networkClient paymentconnect.NetworkServiceCl
 		Amount: &payment.PaymentAmount{Amount: &payment.PaymentAmount_PayInAmount{
 			PayInAmount: &common.Decimal{Unscaled: 500, Exponent: 0}, // amount in BRL
 		}},
-		PayInMethod:    common.PaymentMethodType_PAYMENT_METHOD_TYPE_CARD,
+		PayInMethod:    common.PaymentMethodType_PAYMENT_METHOD_TYPE_SEPA,
 		PayOutCurrency: "GBP",
 		PayOutMethod:   common.PaymentMethodType_PAYMENT_METHOD_TYPE_SWIFT,
 		QuoteType:      payment.QuoteType_QUOTE_TYPE_REALTIME,
@@ -27,9 +27,9 @@ func GetQuote(ctx context.Context, networkClient paymentconnect.NetworkServiceCl
 	} else {
 		switch quote.Msg.Result.(type) {
 		case *payment.GetQuoteResponse_Success_:
-			log.Printf("Got success response with reason with quote id: %d \n", quote.Msg.GetSuccess().QuoteId.QuoteId)
+			log.Printf("Got success response with quote id: %d \n", quote.Msg.GetSuccess().QuoteId.QuoteId)
 		case *payment.GetQuoteResponse_Failure_:
-			log.Printf("Got failure response with reason: %d\n", quote.Msg.GetFailure().Reason)
+			log.Printf("Got failure response with reason: %s\n", quote.Msg.GetFailure().Reason.String())
 		default:
 			log.Println("Unknown type")
 		}
