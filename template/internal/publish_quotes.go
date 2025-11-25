@@ -31,10 +31,10 @@ func PublishQuotes(ctx context.Context, networkClient paymentconnect.NetworkServ
 			timestamp := timestamppb.New(time.Now())                        // current timestamp
 
 			_, err := networkClient.UpdateQuote(ctx, connect.NewRequest(&payment.UpdateQuoteRequest{
-				PayOut: []*payment.UpdateQuoteRequest_Quote{
+				PayOut: []*payment.UpdateQuoteRequest_Quote{ // The quote at which you want to take USDT and pay out local currency (off-ramp)
 					{
 						Currency:      currency,
-						QuoteType:     payment.QuoteType_QUOTE_TYPE_REALTIME, // REALTIME is only one supported right now
+						QuoteType:     payment.QuoteType_QUOTE_TYPE_REALTIME, // REALTIME is only supported right now
 						PaymentMethod: paymentMethod,
 						Expiration:    expiration,
 						Timestamp:     timestamp,
@@ -54,10 +54,10 @@ func PublishQuotes(ctx context.Context, networkClient paymentconnect.NetworkServ
 						},
 					},
 				},
-				PayIn: []*payment.UpdateQuoteRequest_Quote{
+				PayIn: []*payment.UpdateQuoteRequest_Quote{ // The quote at which you want to take local currency and settle with USDT (on-ramp)
 					{
 						Currency:      currency,
-						QuoteType:     payment.QuoteType_QUOTE_TYPE_REALTIME, // REALTIME is only one supported right now
+						QuoteType:     payment.QuoteType_QUOTE_TYPE_REALTIME, // REALTIME is only supported right now
 						PaymentMethod: paymentMethod,
 						Expiration:    expiration,
 						Timestamp:     timestamp,
