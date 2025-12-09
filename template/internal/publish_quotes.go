@@ -30,6 +30,9 @@ func PublishQuotes(ctx context.Context, networkClient paymentconnect.NetworkServ
 			expiration := timestamppb.New(time.Now().Add(30 * time.Second)) // expiration time - 30 seconds from now
 			timestamp := timestamppb.New(time.Now())                        // current timestamp
 
+			//NOTE: Every update quote request discard all previous quotes that were published before.
+			// So if you want to publish multiple quotes, you need to combine them into a single request.
+			// Otherwise, if you send multiple requests, only the quotes from the last one will be available.
 			_, err := networkClient.UpdateQuote(ctx, connect.NewRequest(&payment.UpdateQuoteRequest{
 				PayOut: []*payment.UpdateQuoteRequest_Quote{ // The quote at which you want to take USDT and pay out local currency (off-ramp)
 					{
@@ -77,11 +80,6 @@ func PublishQuotes(ctx context.Context, networkClient paymentconnect.NetworkServ
 						},
 					},
 				},
-				// it can be either pay-in or pay-out quotes, depends on whether you want to accept incoming payments or send outgoing ones,
-				// or the both.
-				//PayIn: []*payment.UpdateQuoteRequest_Quote{
-				//	{},
-				//},
 			}))
 			if err != nil {
 				log.Printf("Error updating quote: %s\n", err.Error()) // handle errors appropriately
