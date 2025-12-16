@@ -24,6 +24,7 @@ github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
 github.com/t-0-network/provider-sdk-go v0.10.0 h1:MaKoIezu3wdDLSHWNSY+DnzAdwcpWIBtO+qBnLxotKI=
 github.com/t-0-network/provider-sdk-go v0.10.0/go.mod h1:48Ll4Z+fhiyGp2m3kfQqvjmhDCmCrJMNrnbXaOCSB9c=
+github.com/t-0-network/provider-sdk-go v0.11.0/go.mod h1:48Ll4Z+fhiyGp2m3kfQqvjmhDCmCrJMNrnbXaOCSB9c=
 golang.org/x/crypto v0.46.0 h1:cKRW/pmt1pKAfetfu+RCEvjvZkA9RimPbh7bhFjGVBU=
 golang.org/x/crypto v0.46.0/go.mod h1:Evb/oLKmMraqjZ2iQTwDwvCtJkczlDuTmdJXoZVzqU0=
 golang.org/x/net v0.48.0 h1:zyQRTTrjc33Lhh0fBgT/H3oZq9WuvRR5gPC70xpDiQU=
