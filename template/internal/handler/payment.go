@@ -52,3 +52,9 @@ func (s *ProviderServiceImplementation) AppendLedgerEntries(
 	// TODO: optionally implement handling of the notifications about new ledger transactions and new ledger entries
 	return connect.NewResponse(&payment.AppendLedgerEntriesResponse{}), nil
 }
+
+// TODO: Step 2.5 when the payment goes through the Manual AML Check on the pay-out provider side, the provider submitted the payment will have a last look to approve final quote
+func (s *ProviderServiceImplementation) ApprovePaymentQuotes(ctx context.Context, c *connect.Request[payment.ApprovePaymentQuoteRequest]) (*connect.Response[payment.ApprovePaymentQuoteResponse], error) {
+	//TODO: check the pay-out quote and decide if it's ok for you to proceed with the payment
+	return connect.NewResponse(&payment.ApprovePaymentQuoteResponse{}), nil
+}

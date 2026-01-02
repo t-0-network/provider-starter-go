@@ -86,6 +86,8 @@ func startProviderServer(config Config, networkClient paymentconnect.NetworkServ
 		log.Fatalf("Failed to create provider service handler: %v", err)
 	}
 
+	// add http handler to handle requests /webhook/payment_success
+
 	shutdownFunc, err := provider.StartServer(
 		providerServiceHandler,
 		provider.WithAddr(config.ServerAddr),

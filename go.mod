@@ -9,7 +9,7 @@ require (
 )
 
 require (
-	github.com/ProjectZKM/Ziren/crates/go-runtime/zkvm_runtime v0.0.0-20251208031133-be43a854e4be // indirect
+	github.com/ProjectZKM/Ziren/crates/go-runtime/zkvm_runtime v0.0.0-20260102100119-3fe07c52ac4b // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/holiman/uint256 v1.3.2 // indirect
 	golang.org/x/crypto v0.46.0 // indirect
