@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"connectrpc.com/connect"
+	"github.com/t-0-network/provider-sdk-go/api/tzero/v1/common"
 	"github.com/t-0-network/provider-sdk-go/api/tzero/v1/payment"
 	"github.com/t-0-network/provider-sdk-go/api/tzero/v1/payment/paymentconnect"
 )
@@ -34,10 +35,27 @@ func (s *ProviderServiceImplementation) UpdatePayment(
 // TODO: Step 2.4 implement how you do payouts (payments initiated by your counterparts)
 func (s *ProviderServiceImplementation) PayOut(ctx context.Context, req *connect.Request[payment.PayoutRequest],
 ) (*connect.Response[payment.PayoutResponse], error) {
+	_, err := s.networkClient.FinalizePayout(ctx, connect.NewRequest(&payment.FinalizePayoutRequest{
+		PaymentId: req.Msg.PaymentId,
+		Result: &payment.FinalizePayoutRequest_Success_{
+			Success: &payment.FinalizePayoutRequest_Success{
+				Receipt: &common.PaymentReceipt{
+					Details: &common.PaymentReceipt_Sepa_{
+						Sepa: &common.PaymentReceipt_Sepa{
+							BankingTransactionReferenceId: ref("123456"),
+						}},
+				},
+			}},
+	}))
+
+	if err != nil {
+		return nil, err
+	}
+
 	return connect.NewResponse(&payment.PayoutResponse{}), nil
 }
 
-//TODO: confirmPayout should be called when you system notifies that payout has been made successfully
+//TODO: FinalizePayout should be called when you system notifies that payout has been made successfully
 
 func (s *ProviderServiceImplementation) UpdateLimit(
 	ctx context.Context, req *connect.Request[payment.UpdateLimitRequest],
@@ -57,4 +75,8 @@ func (s *ProviderServiceImplementation) AppendLedgerEntries(
 func (s *ProviderServiceImplementation) ApprovePaymentQuotes(ctx context.Context, c *connect.Request[payment.ApprovePaymentQuoteRequest]) (*connect.Response[payment.ApprovePaymentQuoteResponse], error) {
 	//TODO: check the pay-out quote and decide if it's ok for you to proceed with the payment
 	return connect.NewResponse(&payment.ApprovePaymentQuoteResponse{}), nil
+}
+
+func ref(s string) *string {
+	return &s
 }
