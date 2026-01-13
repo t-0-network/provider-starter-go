@@ -35,6 +35,8 @@ func (s *ProviderServiceImplementation) UpdatePayment(
 // TODO: Step 2.4 implement how you do payouts (payments initiated by your counterparts)
 func (s *ProviderServiceImplementation) PayOut(ctx context.Context, req *connect.Request[payment.PayoutRequest],
 ) (*connect.Response[payment.PayoutResponse], error) {
+
+	//TODO: FinalizePayout should be called when your system notifies that payout has been made successfully
 	_, err := s.networkClient.FinalizePayout(ctx, connect.NewRequest(&payment.FinalizePayoutRequest{
 		PaymentId: req.Msg.PaymentId,
 		Result: &payment.FinalizePayoutRequest_Success_{
@@ -54,8 +56,6 @@ func (s *ProviderServiceImplementation) PayOut(ctx context.Context, req *connect
 
 	return connect.NewResponse(&payment.PayoutResponse{}), nil
 }
-
-//TODO: FinalizePayout should be called when you system notifies that payout has been made successfully
 
 func (s *ProviderServiceImplementation) UpdateLimit(
 	ctx context.Context, req *connect.Request[payment.UpdateLimitRequest],
