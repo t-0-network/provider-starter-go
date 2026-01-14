@@ -71,7 +71,7 @@ func (s *ProviderServiceImplementation) AppendLedgerEntries(
 }
 
 func (s *ProviderServiceImplementation) ApprovePaymentQuotes(ctx context.Context, c *connect.Request[payment.ApprovePaymentQuoteRequest]) (*connect.Response[payment.ApprovePaymentQuoteResponse], error) {
-	//TODO: in case of AML check is enabled, this is the endpoint to have a last look at quote and approve after AML check is done
+	//TODO: this is the endpoint to have a last look at quote and approve after AML check is done
 	return connect.NewResponse(&payment.ApprovePaymentQuoteResponse{}), nil
 }
 
