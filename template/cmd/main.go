@@ -47,7 +47,7 @@ func main() {
 	waitForShutdownSignal(cancel, shutdownFunc)
 
 	// TODO: Step 2.2 Deploy your integration and provide t-0 team with the base URL
-	// TODO: Step 2.3 Test payment submission (see submit_payment.ts)
+	// TODO: Step 2.3 Test payment submission
 	// TODO: Step 2.5 Ask t-0 team to submit a payment to test your payOut endpoint
 }
 
